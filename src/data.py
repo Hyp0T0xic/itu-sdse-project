@@ -74,3 +74,51 @@ def clean_data(df: pd.DataFrame) -> pd.DataFrame:
         df = df[df.source == "signup"]
         
     return df
+
+def remove_outliers(df: pd.DataFrame, continuous_cols: list) -> pd.DataFrame:
+    """
+    Clips outliers in continuous columns to mean +/- 2 std.
+    """
+    for col in continuous_cols:
+        if col in df.columns:
+            # Check if numerical
+            if pd.api.types.is_numeric_dtype(df[col]):
+                mean = df[col].mean()
+                std = df[col].std()
+                df[col] = df[col].clip(lower=mean - 2 * std, upper=mean + 2 * std)
+    return df
+
+def impute_cols(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Imputes missing values for all columns.
+    - Numeric: Mean
+    - Categorical: Mode
+    """
+    # Fix specific known missing values first (from notebook)
+    if "customer_code" in df.columns:
+        df.loc[df['customer_code'].isna(), 'customer_code'] = 'None'
+        
+    # Apply generic imputation
+    for col in df.columns:
+        df[col] = impute_missing_values(df[col])
+        
+    return df
+
+def engineer_features(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Creates new features, specifically 'bin_source'.
+    """
+    if "source" in df.columns:
+        mapping = {
+            'li': 'socials', 
+            'fb': 'socials', 
+            'organic': 'group1', 
+            'signup': 'group1'
+        }
+        # Note: In the original notebook, there was logic to set 'Others' which was 
+        # overwritten by the map function. Here we implement it cleaner:
+        # map() and fill anything not matched with "Others" (or mode if we wanted to be strictly 1:1 with buggy code)
+        # We will assume "Others" was the intent.
+        df['bin_source'] = df['source'].map(mapping).fillna("Others")
+        
+    return df
