@@ -13,3 +13,10 @@ venv/
 # IDEs
 .vscode/
 .idea/
+
+# Data & Models (Tracked by DVC or generated)
+*.joblib
+*.pkl
+artifacts/*.csv
+!artifacts/*.dvc
+mlruns/
