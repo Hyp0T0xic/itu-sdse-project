@@ -43,6 +43,9 @@ jobs:
           name: model
           path: .
 
+      - name: Install dependencies for model loading
+        run: pip install xgboost scikit-learn pandas
+
       - name: Run Model Validator
         uses: lasselundstenjensen/itu-sdse-project-model-validator@main
         with:
