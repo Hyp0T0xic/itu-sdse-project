@@ -17,7 +17,7 @@ venv/
 # Data & Models (Tracked by DVC or generated)
 *.joblib
 *.pkl
-artifacts/*.csv
+# artifacts/*.csv
 !artifacts/*.dvc
 mlruns/
 

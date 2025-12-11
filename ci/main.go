@@ -39,7 +39,7 @@ func build(ctx context.Context) error {
 		WithExec([]string{"python", "-m", "src.main"})
 
 	// 3. Export the artifacts
-	// The pipeline produces 'artifacts/model.joblib', we want to save it back to our host
+	// The pipeline produces 'artifacts/model.pkl', we want to save it back to our host
 	_, err = container.Directory("artifacts").Export(ctx, "../artifacts")
 	if err != nil {
 		return err

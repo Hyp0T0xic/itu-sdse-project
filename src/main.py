@@ -73,7 +73,7 @@ def main():
     
     # 9. Save Best Model
     print("Saving best model...")
-    joblib.dump(best_model, "artifacts/model.joblib")
+    joblib.dump(best_model, "artifacts/model.pkl")
     print("Pipeline completed successfully!")
 
 if __name__ == "__main__":
