@@ -20,3 +20,9 @@ venv/
 artifacts/*.csv
 !artifacts/*.dvc
 mlruns/
+
+# Go
+ci/vendor/
+ci/bin/
+go.work
+go.work.sum
