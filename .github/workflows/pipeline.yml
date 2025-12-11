@@ -44,6 +44,6 @@ jobs:
           path: .
 
       - name: Run Model Validator
-        uses: lasselundstenjensen/itu-sdse-project-model-validator@master
+        uses: lasselundstenjensen/itu-sdse-project-model-validator@main
         with:
           model_file: model.joblib
