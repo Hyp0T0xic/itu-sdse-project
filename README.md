@@ -1,78 +1,63 @@
 # ITU BDS MLOPS'25 - Project
 
-## Task
+## Project Overview
+This repository contains a production-grade MLOps pipeline for a Lead Scoring model. It demonstrates the transformation of a monolithic notebook into a structured, automated workflow using **Dagger** and **GitHub Actions**.
 
-Based on the input provided (see below), fork the repository and restructure the code to adhere to the concepts and ideas you have seen throughout the course.  The diagram below provides a detailed overview of the structure that the solution is expected to follow.   
-
+The solution adheres to the following architecture:
 ![Project architecture](./docs/project-architecture.png)
 
-For the exam submission, we expect you to submit a pdf containing:
-- the list of members of the group
-- the link to the github.com public repository hosting your solution
-  - following the above, there is *no need* to invite the teaching staff as collaborators
+## Repository Structure
 
-The repository linked in the submission should contain:
+- **`src/`**: The core Python source code.
+    - `data.py`: Data loading and preprocessing.
+    - `train.py`: Model training (XGBoost vs Logistic Regression) and selection.
+    - `evaluate.py`: Evaluation metrics.
+    - `main.py`: The entry point script that orchestrates the pipeline.
+- **`ci/`**: The Dagger automation pipeline written in **Go**.
+    - `main.go`: Defines the containerized workflow (Mount -> Install -> Train -> Export).
+- **`.github/workflows/`**: Continuous Integration configuration.
+    - `pipeline.yml`: Triggers the Dagger pipeline on GitHub Runners and validates the output.
+- **`artifacts/`**: Stores generated outputs (models, scalers) and pulled data.
+- **`notebooks/`**: The original exploratory analysis (kept for reference).
 
-- A README.md file that describes the project
-- GitHub automation workflow
-- Dagger workflow (in Go)
-- All history
+## How to Run
 
+### Prerequisities
+- **Docker Desktop** (Must be running)
+- **Go** (for Dagger)
+- **Python 3.11+**
 
-## Inputs
+### 1. Run Locally (Python)
+You can run the pipeline directly if you have the environment set up:
+```bash
+pip install -r requirements.txt
+python -m src.main
+```
 
-You are given the following material:
-- Python monolith (see `notebooks` folder)
-- Raw input data (see `notebooks/artifacts` folder)
-- GitHub action to test model inference (see [`model-validator`](https://github.com/lasselundstenjensen/itu-sdse-project-model-validator) action)
+### 2. Run Automation (Dagger)
+To run the exact same pipeline used in production (containerized):
+```bash
+cd ci
+dagger run go run main.go
+```
+This will:
+1.  Spin up a clean Python container.
+2.  Install all dependencies.
+3.  Train and select the best model.
+4.  Export `model.joblib` to your local `artifacts/` folder.
 
-## Outputs
+### 3. CI/CD (GitHub Actions)
+Every push to `main` or `feature/*` branches triggers the cloud pipeline:
+1.  **Build & Train**: Runs the Dagger pipeline.
+2.  **Upload**: Saves the model artifact.
+3.  **Validate**: Runs `itu-sdse-project-model-validator` to certify the model.
 
-- Your GitHub repository (including all history)
-  - A README.md file that describes the project
-  - GitHub automation workflow
-  - Dagger workflow (in Go)
-- Model artifact produced by GitHub workflow and named 'model'
+## Model Details
+The pipeline trains two candidate models:
+1.  **XGBoost Classifier**
+2.  **Logistic Regression**
 
-> **NOTE:**
-> The Dagger workflow can be run locally or inside the GitHub workflow—both are viable options during development.
->
-> The Dagger workflow can run locally and can also be made to produce outputs locally during development. But when wrapping the Dagger workflow in a GitHub workflow, the output is instead stored inside the GitHub runner (i.e. a virtual machine).
->
-> Use the publicly available [`actions/upload-artifact`](https://github.com/actions/upload-artifact) to store the model artifact in the GitHub worklow pipeline.
->
-> This model artifact can then be picked up by the [action provided](https://github.com/lasselundstenjensen/itu-sdse-project-model-validator), which will run some inference tests to ensure that the correct model was trained.
+It automatically selects the best performer based on the **F1 Score** on a held-out test set.
 
-
-## How will we assess
-
-Below, we provide information on how we will assess the submission clustered around several aspects.  The list relates to groups of size 3; if your group is of size 4, you are expected also to work on the optional items, i.e., to use pull requests and to provide tests.
-
-#### Versioning
-
-- Use of Git (semantic commit messages, branches, branch longevity, commit frequency/size)
-- Management of data
-- Use of pull requests (OPTIONAL)
-
-#### Programming
-
-- Decomposition of Python notebook
-- Adherance to standard data science MLOps project structure
-- Presence of tests (OPTIONAL)
-
-#### Workflow automation
-
-- Presence of a workflow that trains the model
-- Presence of a workflow that tests the model
-- Structure of Dagger workflow
-- Orchestration of Dagger workflow through GitHub workflow
-
-#### Documentation (README.md)
-
-- Description of project structure
-- How to run the code and generate the model artifact
-
-
-## Questions
-
-If you have any questions about the information shared here, please feel free to post them on Learnit. Answers to private emails on this topic will also be shared on Learnit, along with the original email content, so that everyone has access to the same information.
+## Members
+- [Your Name/Group]
