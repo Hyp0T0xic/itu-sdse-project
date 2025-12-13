@@ -45,6 +45,12 @@ func build(ctx context.Context) error {
 		return err
 	}
 
+	// Export MLflow runs
+	_, err = container.Directory("mlruns").Export(ctx, "../mlruns")
+	if err != nil {
+		return err
+	}
+
 	fmt.Println("Pipeline finished! Model exported to ./artifacts")
 	return nil
 }
