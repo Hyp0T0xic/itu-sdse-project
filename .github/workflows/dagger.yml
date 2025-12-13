@@ -6,7 +6,7 @@ on:
       - main
       - 'github-actions'
       - 'MlFlow'
-      - 'cookiecutter-template'
+      - 'cookiecutter_template'
 
 jobs:
   build-and-train:
