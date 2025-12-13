@@ -22,7 +22,7 @@ jobs:
       - name: Run Dagger Pipeline
         run: |
           cd ci
-          dagger run go run main.go
+          dagger run go run pipeline.go
 
       - name: Upload Model Artifact
         uses: actions/upload-artifact@v4

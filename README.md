@@ -14,9 +14,9 @@ The solution adheres to the following architecture:
     - `evaluate.py`: Evaluation metrics.
     - `main.py`: The entry point script that orchestrates the pipeline.
 - **`ci/`**: The Dagger automation pipeline written in **Go**.
-    - `main.go`: Defines the containerized workflow (Mount -> Install -> Train -> Export).
+    - `pipeline.go`: Defines the containerized workflow (Mount -> Install -> Train -> Export).
 - **`.github/workflows/`**: Continuous Integration configuration.
-    - `pipeline.yml`: Triggers the Dagger pipeline on GitHub Runners and validates the output.
+    - `dagger.yml`: Triggers the Dagger pipeline on GitHub Runners and validates the output.
 - **`artifacts/`**: Stores generated outputs (models, scalers) and pulled data.
 - **`notebooks/`**: The original exploratory analysis (kept for reference).
 
@@ -38,7 +38,7 @@ python -m src.main
 To run the exact same pipeline used in production (containerized):
 ```bash
 cd ci
-dagger run go run main.go
+dagger run go run pipeline.go
 ```
 This will:
 1.  Spin up a clean Python container.
