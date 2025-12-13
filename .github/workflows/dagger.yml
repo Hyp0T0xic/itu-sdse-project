@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - 'github-actions'
+      - 'MlFlow'
 
 jobs:
   build-and-train:
