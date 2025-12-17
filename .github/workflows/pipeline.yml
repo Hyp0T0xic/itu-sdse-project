@@ -1,0 +1,59 @@
+name: MLOps Pipeline
+
+on:
+  push:
+    branches:
+      - main
+      - 'github-actions'
+      - 'feature/dvc-integration-fresh'
+
+jobs:
+  build-and-train:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install Dagger CLI
+        run: |
+          cd ci
+          curl -L https://dl.dagger.io/dagger/install.sh | sh
+          sudo mv bin/dagger /usr/local/bin/dagger
+          
+      - name: Run Dagger Pipeline
+        run: |
+          cd ci
+          dagger run go run main.go
+
+      - name: Upload Model Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: model
+          path: artifacts/model.pkl
+
+      - name: Upload MLflow Runs
+        uses: actions/upload-artifact@v4
+        with:
+          name: mlruns
+          path: mlruns/
+
+  validate-model:
+    needs: build-and-train
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download Model Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: model
+          path: .
+
+      - name: Install dependencies for model loading
+        run: pip install xgboost scikit-learn pandas
+
+      - name: Run Model Validator
+        uses: lasselundstenjensen/itu-sdse-project-model-validator@main
+        with:
+          model_file: model.pkl
