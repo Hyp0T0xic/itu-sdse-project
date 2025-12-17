@@ -3,6 +3,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MinMaxScaler
 import joblib
 import os
+import mlflow
 
 from src.data import load_data, clean_data, filter_by_date, remove_outliers, impute_cols, engineer_features
 from src.train import train_xgboost, train_log_reg, select_best_model
@@ -17,6 +18,18 @@ def main():
         return
 
     df = load_data("artifacts/raw_data.csv")
+
+    # Initialize MLflow
+    if not os.path.exists("mlruns"):
+        os.makedirs("mlruns")
+    mlflow.set_tracking_uri("file:./mlruns")
+    mlflow.set_experiment("Lead_Scoring_Experiment")
+    
+    # Enable Autologging
+    mlflow.sklearn.autolog()
+    mlflow.xgboost.autolog()
+    
+    mlflow.start_run()
     
     # 2. Basic Cleaning & Filtering
     print("Cleaning data...")
