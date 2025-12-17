@@ -1,6 +1,7 @@
-from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report, f1_score
 import pandas as pd
 import numpy as np
+import mlflow
 
 def evaluate_model(model, X_test: pd.DataFrame, y_test: pd.Series):
     """
@@ -25,4 +26,11 @@ def evaluate_model(model, X_test: pd.DataFrame, y_test: pd.Series):
     print("\nClassification Report:")
     print(classification_report(y_test, y_pred))
     
+    # Log metrics to MLflow if a run is active
+    if mlflow.active_run():
+        mlflow.log_metric("test_accuracy", acc)
+        f1 = f1_score(y_test, y_pred, average='weighted') # Calculate F1 as well since it's important
+        mlflow.log_metric("test_f1_score", f1)
+        print(f"Logged metrics to MLflow run: {mlflow.active_run().info.run_id}")
+
     return acc, cm
