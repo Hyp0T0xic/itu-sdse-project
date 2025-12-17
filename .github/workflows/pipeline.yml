@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - 'github-actions'
+      - 'DVC_testing'
 
 jobs:
   build-and-train:
