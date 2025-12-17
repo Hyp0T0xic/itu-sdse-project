@@ -5,8 +5,7 @@ on:
     branches:
       - main
       - 'github-actions'
-      - 'MlFlow'
-      - 'cookiecutter_template'
+      - 'feature/dvc-integration-fresh'
 
 jobs:
   build-and-train:

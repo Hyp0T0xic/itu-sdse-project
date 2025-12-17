@@ -35,6 +35,8 @@ func build(ctx context.Context) error {
 		WithWorkdir("/app").
 		// Install dependencies
 		WithExec([]string{"pip", "install", "-r", "requirements.txt"}).
+		// Pull data (DVC)
+		WithExec([]string{"dvc", "pull"}).
 		// Run the training pipeline
 		WithExec([]string{"python", "-m", "src.main"})
 
@@ -45,7 +47,7 @@ func build(ctx context.Context) error {
 		return err
 	}
 
-	// Export MLflow runs
+	// Export mlruns for tracking
 	_, err = container.Directory("mlruns").Export(ctx, "../mlruns")
 	if err != nil {
 		return err
